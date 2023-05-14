@@ -1,6 +1,4 @@
 import numpy as np
-from scipy import ndimage
-import cv2
 
 
 def non_local_means_denoise(image, h=0.1, sigma=1.0):
