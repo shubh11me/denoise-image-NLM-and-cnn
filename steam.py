@@ -3,7 +3,7 @@ from PIL import Image
 import os
 import cv2
 from denoise_img import non_local_means_denoise
-
+from cnn_func import cnnn
 
 st.title("Welcome to Image Denoiser using NLM and CNN")
 
@@ -53,7 +53,11 @@ if uploaded_file is not None and i1:
     output_image = non_local_means_denoise(input_image, h=h, sigma=sigma)
     cv2.imwrite('outputs/output_image.jpg', output_image)
 
+    output_image = cnnn(image_path)
+    cv2.imwrite('outputs/cnn.jpg', output_image)
+
     st.image('outputs/output_image.jpg', caption="Denoised Image Using NLM with h 0.2")
+    st.image('outputs/cnn.jpg', caption="CNN Predicted Image")
     # output_image = non_local_means_denoise(input_image, h=0.5, sigma=1.2)
     # cv2.imwrite('outputs/output_image.jpg', output_image)
 
