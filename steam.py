@@ -4,7 +4,7 @@ import os
 import cv2
 from denoise_img import non_local_means_denoise
 from cnn_func import cnnn
-
+from denoiser import dd
 st.title("Welcome to Image Denoiser using NLM and CNN")
 
 h = 0.5
@@ -52,12 +52,19 @@ if uploaded_file is not None and i1:
     # print(sigma)
     output_image = non_local_means_denoise(input_image, h=h, sigma=sigma)
     cv2.imwrite('outputs/output_image.jpg', output_image)
-
-    output_image = cnnn(image_path)
-    cv2.imwrite('outputs/cnn.jpg', output_image)
+    image_path='outputs/output_image.jpg'
+    cnn = cnnn(image_path)
+    cv2.imwrite('outputs/cnn.jpg', cnn['img'])
+    # output_image = dd(image_path)
+    # cv2.imwrite('outputs/cnn.jpg', output_image)
 
     st.image('outputs/output_image.jpg', caption="Denoised Image Using NLM with h 0.2")
     st.image('outputs/cnn.jpg', caption="CNN Predicted Image")
+    # if st.button("Redenoise"):
+    #     print("sccs")
+    st.warning("Results are")
+    st.success("The Total Loss is :-"+str(cnn['score']))
+    st.success("The Shape of image:-"+str(cnn['shape']))
     # output_image = non_local_means_denoise(input_image, h=0.5, sigma=1.2)
     # cv2.imwrite('outputs/output_image.jpg', output_image)
 

@@ -179,6 +179,6 @@ def cnnn(path):
     denoised_img = denoised_img[0] * 255.0
     denoised_img = denoised_img.astype("uint8")
 # denoised_img = np.uint8(np.clip(denoised_img * 255.0, 0, 255))
-    return denoised_img
+    return {'img':denoised_img,'shape':train_images.shape,'score':score}
 # Save the denoised image
     # cv2.imwrite('denoised_image.jpeg', denoised_img)
