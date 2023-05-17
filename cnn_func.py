@@ -5,6 +5,14 @@ import numpy as np
 from PIL import Image
 
 import cv2
+
+
+import numpy as np
+import cv2
+from keras.models import Sequential
+from keras.layers import Conv2D
+
+
 # Load the dataset
 
 def cnnn(path):
@@ -182,3 +190,44 @@ def cnnn(path):
     return {'img':denoised_img,'shape':train_images.shape,'score':score}
 # Save the denoised image
     # cv2.imwrite('denoised_image.jpeg', denoised_img)
+
+
+
+def denoise_image_cnn_without_model_train(image_path):
+    # Load the noisy image
+    image = cv2.imread(image_path)
+
+    # Convert BGR to RGB
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # Normalize the pixel values
+    image = image.astype('float32') / 255.0
+
+    # Add noise to the image (optional)
+    noisy_image = image + np.random.normal(loc=0, scale=0.1, size=image.shape)
+
+    # Define the CNN model
+    model = Sequential()
+    model.add(Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=noisy_image.shape))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(3, (3, 3), activation='relu', padding='same'))
+
+    # Compile the model
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+    # Train the model
+    model.fit(np.expand_dims(noisy_image, axis=0), np.expand_dims(image, axis=0), epochs=10, batch_size=1)
+
+    # Denoise the image
+    denoised_image = model.predict(np.expand_dims(noisy_image, axis=0))
+
+    # Remove the extra dimension
+    denoised_image = np.squeeze(denoised_image)
+
+    # Rescale the denoised image to [0, 1]
+    denoised_image = (denoised_image - np.min(denoised_image)) / (np.max(denoised_image) - np.min(denoised_image))
+
+    # Convert back to BGR
+    denoised_image = cv2.cvtColor(denoised_image, cv2.COLOR_RGB2BGR)
+
+    return denoised_image * 255.0
