@@ -61,8 +61,8 @@ if uploaded_file is not None and i1:
     # cv2.imwrite('outputs/cnn.jpg', output_image)
 
     st.image('outputs/output_image.jpg', caption="Denoised Image Using NLM with h 0.2")
-    st.image('outputs/cnn.jpg', caption="CNN Predicted Image")
-    st.image('outputs/cnn_wm.jpg', caption="CNN wm Predicted Image")
+    # st.image('outputs/cnn.jpg', caption="CNN Predicted Image")
+    st.image('outputs/cnn_wm.jpg', caption="CNN Predicted Image")
     # if st.button("Redenoise"):
     #     print("sccs")
     st.warning("Results are")
