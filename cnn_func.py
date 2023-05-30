@@ -133,7 +133,7 @@ def cnnn(path):
 
 # Train the model
     print("herrrrr")
-    model.fit(train_images_noisy, train_images, epochs=2, batch_size=256)
+    model.fit(train_images_noisy, train_images, epochs=2, batch_size=1)
     print("zall")
 
 # Evaluate the model
@@ -231,3 +231,60 @@ def denoise_image_cnn_without_model_train(image_path):
     denoised_image = cv2.cvtColor(denoised_image, cv2.COLOR_RGB2BGR)
 
     return denoised_image * 255.0
+
+
+
+def cnn_b(path):
+
+
+    def remove_gaussian_noise(image_path):
+        # Load the grayscale image
+        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+        # Apply bilateral filter
+        denoised_image = cv2.bilateralFilter(image, 8, 85, 85)
+
+        return denoised_image
+
+
+# Load the noisy image
+# image = cv2.imread('noisy_image.jpeg', cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+# Normalize the pixel values
+    image = image.astype('float32') / 255.0
+
+# Add noise to the image (optional)
+    noisy_image = image + np.random.normal(loc=0, scale=0.1, size=image.shape)
+
+# Reshape the image for CNN input
+    input_image = np.expand_dims(noisy_image, axis=2)
+
+# Define the CNN model
+    model = Sequential()
+    model.add(Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=input_image.shape))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(1, (3, 3), activation='relu', padding='same'))
+
+# Compile the model
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+# Train the model
+    model.fit(input_image, image, epochs=10, batch_size=1)
+
+# Denoise the image
+    denoised_image = model.predict(input_image)
+
+# Remove the extra dimension
+    denoised_image = np.squeeze(denoised_image)
+
+# Rescale the denoised image to [0, 1]
+    denoised_image = (denoised_image - np.min(denoised_image)) / (np.max(denoised_image) - np.min(denoised_image))
+
+# Adjust the contrast of the denoised image
+    denoised_image = cv2.normalize(denoised_image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    cv2.imwrite('temp/denoised4_image.jpeg', denoised_image)
+
+    denoised_image=remove_gaussian_noise('temp/denoised4_image.jpeg')
+# Save the denoised image
+    return denoised_image
