@@ -253,8 +253,10 @@ def cnn_b(path):
 
 # Normalize the pixel values
     image = image.astype('float32') / 255.0
+    image = cv2.resize(image  , (256 , 256))
 
 # Add noise to the image (optional)
+    print(image.shape)
     noisy_image = image + np.random.normal(loc=0, scale=0.1, size=image.shape)
 
 # Reshape the image for CNN input
